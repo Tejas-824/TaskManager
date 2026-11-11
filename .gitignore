@@ -1,0 +1,36 @@
+# ---------- .NET ----------
+bin/
+obj/
+*.user
+*.suo
+*.userprefs
+*.log
+TestResults/
+publish/
+
+# ---------- Visual Studio / VS Code ----------
+.vs/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# ---------- Node / Angular ----------
+node_modules/
+dist/
+.angular/
+out-tsc/
+npm-debug.log*
+yarn-error.log
+.sass-cache/
+/coverage
+
+# ---------- Windows ----------
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# ---------- Secrets / local files ----------
+.env
+appsettings.Development.json
+*.mdf
+*.ldf
