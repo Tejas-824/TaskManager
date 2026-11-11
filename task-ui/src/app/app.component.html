@@ -53,9 +53,9 @@
         <input name="assignedTo" [(ngModel)]="newTask.assignedTo" placeholder="Name" />
       </div>
 
-      <div class="field actions">
-        <button type="submit" class="btn primary">Save Task</button>
-      </div>
+      <button type="submit" class="btn primary" [disabled]="saving">
+          {{ saving ? 'Saving...' : 'Save Task' }}
+        </button>
     </form>
   }
 
@@ -98,7 +98,8 @@
               <span [class]="'badge ' + task.priority.toLowerCase()">{{ task.priority }}</span>
             </td>
             <td>
-              <select [value]="task.status" (change)="changeStatus(task, $any($event.target).value)">
+                            <select [value]="task.status" [disabled]="busyId === task.id"
+                      (change)="changeStatus(task, $any($event.target).value)">
                 @for (s of statuses; track s) {
                   <option [value]="s" [selected]="s === task.status">{{ statusLabels[s] }}</option>
                 }
@@ -107,7 +108,9 @@
             <td>{{ task.assignedTo || '-' }}</td>
             <td>{{ task.createdDate | date: 'dd MMM yyyy' }}</td>
             <td>
-              <button class="btn danger small" (click)="deleteTask(task)">Delete</button>
+              <button class="btn danger small" [disabled]="busyId === task.id" (click)="deleteTask(task)">
+                {{ busyId === task.id ? 'Please wait...' : 'Delete' }}
+              </button>
             </td>
           </tr>
         } @empty {

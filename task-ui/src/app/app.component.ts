@@ -25,6 +25,8 @@ export class AppComponent implements OnInit {
   filterPriority = '';
   errorMessage = '';
   showForm = false;
+  saving = false;
+  busyId: number | null = null;
 
   statuses: TaskStatus[] = ['ToDo', 'InProgress', 'Done'];
   priorities: TaskPriority[] = ['Low', 'Medium', 'High', 'Critical'];
@@ -62,14 +64,19 @@ export class AppComponent implements OnInit {
       return;
     }
 
+    this.saving = true;
     this.taskService.createTask(this.newTask).subscribe({
       next: () => {
+        this.saving = false;
         this.newTask = this.emptyTask();
         this.showForm = false;
         this.errorMessage = '';
         this.refresh();
       },
-      error: () => (this.errorMessage = 'Could not create the task. Please check the values.')
+      error: () => {
+        this.saving = false;
+        this.errorMessage = 'Could not create the task. Please check the values.';
+      }
     });
   }
 
@@ -82,18 +89,32 @@ export class AppComponent implements OnInit {
       assignedTo: task.assignedTo ?? ''
     };
 
+    this.busyId = task.id;
     this.taskService.updateTask(task.id, payload).subscribe({
-      next: () => this.refresh(),
-      error: () => (this.errorMessage = 'Could not update the status.')
+      next: () => {
+        this.busyId = null;
+        this.refresh();
+      },
+      error: () => {
+        this.busyId = null;
+        this.errorMessage = 'Could not update the status.';
+      }
     });
   }
 
   deleteTask(task: TaskItem): void {
     if (!confirm(`Delete "${task.title}"?`)) return;
 
+    this.busyId = task.id;
     this.taskService.deleteTask(task.id).subscribe({
-      next: () => this.refresh(),
-      error: () => (this.errorMessage = 'Could not delete the task.')
+      next: () => {
+        this.busyId = null;
+        this.refresh();
+      },
+      error: () => {
+        this.busyId = null;
+        this.errorMessage = 'Could not delete the task.';
+      }
     });
   }
 
